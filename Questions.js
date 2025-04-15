@@ -51,7 +51,7 @@ function saveScore(username, score, total, percentage) {
 }
 
 // show leaderboard
-function showLeadreBoard(limit = 5) {
+function showLeaderBoard(limit = 5) {
     const filePath = 'scores.json';
 
     if (!fs.existsSync(filepath)) {
