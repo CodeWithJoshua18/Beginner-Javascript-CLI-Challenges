@@ -1,10 +1,10 @@
 const prompt = require('prompt-sync')();
-const fs = require('fs');
+import { readFileSync, existsSync, writeFileSync } from 'fs';
 
 //  Load questions
 function loadQuestions() {
     try {
-        const dat = fs.readFileSync('Questions.json', 'utf8');
+        const dat = readFileSync('Questions.json', 'utf8');
         const questions = JSON.parse(data);
     } catch (e) {
         console.error('Error reading file:', e);
@@ -35,9 +35,9 @@ function saveScore(username, score, total, percentage) {
     let scores = [];
 
     // Check if the file exists and read it
-    if (fs.existsSync(filePath)) {
+    if (existsSync(filePath)) {
         try {
-            const data = fs.readFileSync(filePath, 'utf8');
+            const data = readFileSync(filePath, 'utf8');
             scores = JSON.parse(data);
         } catch (e) {
             console.error('Error reading file:', e);
@@ -46,7 +46,7 @@ function saveScore(username, score, total, percentage) {
 
     // Add new score to the array
     scores.push(record);
-    fs.writeFileSync(filePath, JSON.stringify(scores, null, 2));
+    writeFileSync(filePath, JSON.stringify(scores, null, 2));
     console.log("Score saved to 'scores.json'");
 }
 
@@ -54,12 +54,12 @@ function saveScore(username, score, total, percentage) {
 function showLeaderBoard(limit = 5) {
     const filePath = 'scores.json';
 
-    if (!fs.existsSync(filepath)) {
+    if (!existsSync(filepath)) {
         console.log("\nNo scores available yet.");
         return;
     }
 
-    const data = fs.readFileSync(filePath, 'utf8');
+    const data = readFileSync(filePath, 'utf8');
     let scores;
     try { 
         scores = JSON.parse(data);
