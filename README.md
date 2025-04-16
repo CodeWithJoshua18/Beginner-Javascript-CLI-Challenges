@@ -23,6 +23,4 @@ Each challenge focuses on a core JavaScript concept while encouraging hands-on p
 
 Make sure you have [Node.js](https://nodejs.org/) installed. Then, from your terminal:
 
-```bash
-cd Questions
 node Questions.js
