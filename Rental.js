@@ -81,11 +81,11 @@ class RentalSystem {
     }
 
     findVehicleById(id) {
-        return this.vehicles.find(vehicle => vehicle.id == id);
+        return this.vehicles.find(vehicle => vehicle.id === id);
     }
 
     findCustomerById(id) {
-        return this.customers.find(customer => customer.customer_id == id);
+        return this.customers.find(customer => customer.customer_id === id);
     }
 
     showAvailableVehicles() {
@@ -105,68 +105,91 @@ class RentalSystem {
 const rental = new RentalSystem();
 
 while (true) {
-    console.log("\n=== 🚘 Car Rental System ===");
-    console.log("1. Add Vehicle");
-    console.log("2. Add Customer");
-    console.log("3. Rent Vehicle");
-    console.log("4. Return Vehicle");
-    console.log("5. View Rented Vehicles");
-    console.log("6. Show Available Vehicles");
-    console.log("7. Exit");
+    console.log("\n=== Welcome to 🚘 Car Rental System ===");
+    const role = prompt("Login as 'admin' or 'customer' (or type 'exit' to quit): ").toLowerCase();
 
-    const choice = prompt("Choose an option (1 - 7): ");
+    if (role === "admin") {
+        while (true) {
+            console.log("\n--- 👨‍💼 Admin Menu ---");
+            console.log("1. Add Vehicle");
+            console.log("2. Add Customer");
+            console.log("3. Show Available Vehicles");
+            console.log("4. Back to Role Selection");
 
-    switch (choice) {
-        case "1":
-            const model = prompt("Enter Car Model: ");
-            const type = prompt("Enter Car Type: ");
-            rental.addVehicle(type, model);
-            break;
-
-        case "2":
-            const userName = prompt("Enter your name: ");
-            rental.addCustomer(userName);
-            break;
-
-        case "3":
-            const rentUserId = prompt("Enter your customer ID: ");
-            const rentVehicleId = prompt("Enter vehicle ID to rent: ");
-            const renter = rental.findCustomerById(parseInt(rentUserId));
-            const vehicleToRent = rental.findVehicleById(parseInt(rentVehicleId));
-            if (renter && vehicleToRent) {
-                renter.rentVehicle(vehicleToRent);
-            } else {
-                console.log("❌ Invalid customer or vehicle ID.");
+            const adminChoice = prompt("Choose an option (1 - 4): ");
+            switch (adminChoice) {
+                case "1":
+                    const model = prompt("Enter Car Model: ");
+                    const type = prompt("Enter Car Type: ");
+                    rental.addVehicle(type, model);
+                    break;
+                case "2":
+                    const name = prompt("Enter Customer Name: ");
+                    rental.addCustomer(name);
+                    break;
+                case "3":
+                    rental.showAvailableVehicles();
+                    break;
+                case "4":
+                    break; // back to role selection
+                default:
+                    console.log("❌ Invalid option.");
             }
-            break;
 
-        case "4":
-            const returnUserId = prompt("Enter your customer ID: ");
-            const returnVehicleId = prompt("Enter vehicle ID to return: ");
-            const returner = rental.findCustomerById(parseInt(returnUserId));
-            const vehicleToReturn = rental.findVehicleById(parseInt(returnVehicleId));
-            if (returner && vehicleToReturn) {
-                returner.returnVehicles(vehicleToReturn);
+            if (adminChoice === "4") break;
+        }
+    } else if (role === "customer") {
+        const customerId = parseInt(prompt("Enter your Customer ID: "));
+        const customer = rental.findCustomerById(customerId);
+        if (!customer) {
+            console.log("❌ Customer not found.");
+            continue;
+        }
+
+        while (true) {
+            console.log(`\n--- 👤 Customer Menu (Welcome ${customer.name}) ---`);
+            console.log("1. Rent a Vehicle");
+            console.log("2. Return a Vehicle");
+            console.log("3. View My Rented Vehicles");
+            console.log("4. Back to Role Selection");
+
+            const custChoice = prompt("Choose an option (1 - 4): ");
+            switch (custChoice) {
+                case "1":
+                    rental.showAvailableVehicles();
+                    const rentId = parseInt(prompt("Enter vehicle ID to rent: "));
+                    const vehicleToRent = rental.findVehicleById(rentId);
+                    if (vehicleToRent) {
+                        customer.rentVehicle(vehicleToRent);
+                    } else {
+                        console.log("❌ Vehicle not found.");
+                    }
+                    break;
+                case "2":
+                    customer.listRentedVehicles();
+                    const returnId = parseInt(prompt("Enter vehicle ID to return: "));
+                    const vehicleToReturn = rental.findVehicleById(returnId);
+                    if (vehicleToReturn) {
+                        customer.returnVehicles(vehicleToReturn);
+                    } else {
+                        console.log("❌ Vehicle not found.");
+                    }
+                    break;
+                case "3":
+                    customer.listRentedVehicles();
+                    break;
+                case "4":
+                    break; // back to role selection
+                default:
+                    console.log("❌ Invalid option.");
             }
-            else {
-                console.log("❌ Invalid customer or vehicle ID.");
-            }
-            break;
-        case "5":
-            const viewUserId = prompt("Enter your customer ID: ");
-            const viewer = rental.findCustomerById(parseInt(viewUserId));
-            if (viewer) {
-                viewer.listRentedVehicles();
-            } else {
-                console.log("❌ Invalid customer ID.");
-            }
-            break;
-        case "6":
-            rental.showAvailableVehicles();
-            break;
-        case "7":
-            console.log("👋 Exiting the system. Goodbye!");
-            process.exit(0);
-        default:
+
+            if (custChoice === "4") break;
+        }
+    } else if (role === "exit") {
+        console.log("👋 Exiting the system. Goodbye!");
+        break;
+    } else {
+        console.log("❌ Invalid role. Please type 'admin' or 'customer'.");
     }
 }
